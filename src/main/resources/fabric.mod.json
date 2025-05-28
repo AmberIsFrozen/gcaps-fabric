@@ -9,7 +9,7 @@
     "LX86"
   ],
   "contact": {
-    "homepage": "https://modrinth.com/gcaps",
+    "homepage": "https://modrinth.com/mod/gcaps",
     "sources": "https://github.com/Kenny-Hui/gcaps-fabric",
     "issues": "https://github.com/Kenny-Hui/gcaps-fabric/issues"
   },
@@ -33,6 +33,6 @@
   "depends": {
     "fabricloader": "*",
     "fabric-api": "*",
-    "minecraft": ">=1.21.5"
+    "minecraft": ">=1.21.6-beta.1"
   }
 }

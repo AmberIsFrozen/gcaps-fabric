@@ -7,10 +7,10 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
+import org.joml.Matrix3x2fStack;
 
 public class HudOverlayRenderer {
     private static final int PADDING = 4;
@@ -30,21 +30,21 @@ public class HudOverlayRenderer {
     }
 
     private static void drawSelectedChar(DrawContext drawContext, TextRenderer textRenderer, String selectedChar, float typeAnimationProgress) {
-        MatrixStack matrices = drawContext.getMatrices();
-        double halfTextWidth = textRenderer.getWidth(selectedChar) / 2.0;
-        double halfFontHeight = textRenderer.fontHeight / 2.0;
+        Matrix3x2fStack matrices = drawContext.getMatrices();
+        float halfTextWidth = textRenderer.getWidth(selectedChar) / 2f;
+        float halfFontHeight = textRenderer.fontHeight / 2f;
 
-        double halfScreenWidth = drawContext.getScaledWindowWidth() / 2.0;
-        double halfScreenHeight = drawContext.getScaledWindowHeight() / 2.0;
+        float halfScreenWidth = drawContext.getScaledWindowWidth() / 2f;
+        float halfScreenHeight = drawContext.getScaledWindowHeight() / 2f;
 
         float textScale = 1.5f + (typeAnimationProgress * 0.5f);
-        matrices.push();
-        matrices.translate(halfScreenWidth - halfTextWidth, halfScreenHeight - halfFontHeight, 0);
-        matrices.translate(halfTextWidth, halfFontHeight, 0);
-        matrices.scale(textScale, textScale, textScale);
-        matrices.translate(-halfTextWidth, -halfFontHeight, 0);
+        matrices.pushMatrix();
+        matrices.translate(halfScreenWidth - halfTextWidth, halfScreenHeight - halfFontHeight);
+        matrices.translate(halfTextWidth, halfFontHeight);
+        matrices.scale(textScale, textScale);
+        matrices.translate(-halfTextWidth, -halfFontHeight);
         drawContext.drawTextWithShadow(textRenderer, Text.literal(selectedChar), 0, 0, Colors.WHITE);
-        matrices.pop();
+        matrices.popMatrix();
     }
 
     private static void drawTextField(DrawContext drawContext, TextRenderer textRenderer, GameOptions gameOptions, String selectedChar) {
