@@ -1,6 +1,5 @@
 package com.lx862.mozccaps;
 
-import com.lx862.mozccaps.data.Language;
 import net.minecraft.client.MinecraftClient;
 
 public class AtamaInput {
@@ -79,5 +78,8 @@ public class AtamaInput {
             input -= 360;
         }
         return input;
+    }
+
+    public record Language (String name, String[] characters) {
     }
 }

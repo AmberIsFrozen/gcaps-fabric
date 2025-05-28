@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import org.lwjgl.glfw.GLFW;
@@ -68,7 +69,7 @@ public class MainClient implements ClientModInitializer {
 	public static boolean capEquipped(boolean chinStrapped) {
 		MinecraftClient minecraft = MinecraftClient.getInstance();
 		if(minecraft.player == null) return false;
-		Item helmetItem = minecraft.player.getInventory().getArmorStack(3).getItem();
+		Item helmetItem = minecraft.player.getEquippedStack(EquipmentSlot.HEAD).getItem();
 		return chinStrapped ? helmetItem == Main.CAPS_STRAPPED : helmetItem == Main.CAPS;
 	}
 

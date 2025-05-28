@@ -1,6 +1,6 @@
 # gCAPS
 Reimplementation of the [Gboard CAPS](https://landing.google.co.jp/caps/) in Minecraft, now enhanced with AI (Atama Input)!  
-Supports Minecraft >= 1.20 with the Fabric/Quilt modloader.
+Supports Minecraft 1.20+ with the Fabric/Quilt modloader.
 
 ![User interface of Atama Input, and the look of the caps from the side](assets/thumbnail.png)
 

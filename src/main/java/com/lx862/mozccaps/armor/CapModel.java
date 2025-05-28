@@ -8,7 +8,7 @@ public class CapModel {
     public static TexturedModelData getTexturedModelData() {
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
-        ModelPartData bb_main = modelPartData.addChild("bb_main", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, 24.0F, 0.0F));
+        ModelPartData bb_main = modelPartData.addChild("bb_main", ModelPartBuilder.create(), ModelTransform.origin(0.0F, 24.0F, 0.0F));
 
         ModelPartData Front_r1 = bb_main.addChild("Front_r1", ModelPartBuilder.create().uv(26, 42).cuboid(1.0F, -3.5F, 0.0F, 2.0F, 7.0F, 0.0F, new Dilation(0.0F))
                 .uv(22, 42).cuboid(-1.0F, -3.5F, 0.0F, 2.0F, 7.0F, 0.0F, new Dilation(0.0F)), ModelTransform.of(4.5017F, -5.5573F, -13.5F, -1.5708F, 0.0F, 0.3491F));

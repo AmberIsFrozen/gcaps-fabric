@@ -39,7 +39,7 @@ public class CapArmorRenderer implements ArmorRenderer {
 
         matrices.push();
         matrices.multiply(rotation);
-        capModel.setTransform(contextModel.hat.getTransform());
+        capModel.setTransform(contextModel.getHead().getTransform());
         matrices.translate(0, -0.1F, -0.07F); //Small offset to make things look right
         matrices.scale(0.6F, 0.6F, 0.6F);
         matrices.translate(0, 0.1F * pressedAmount, 0);
@@ -50,7 +50,7 @@ public class CapArmorRenderer implements ArmorRenderer {
     private void renderStrap(MatrixStack matrices, VertexConsumer vertexConsumer, BipedEntityModel<BipedEntityRenderState> contextModel, int light) {
         matrices.push();
         matrices.scale(0.6F, 0.6F, 0.6F);
-        chinModel.setTransform(contextModel.head.getTransform());
+        chinModel.setTransform(contextModel.getHead().getTransform());
         chinModel.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV);
         matrices.pop();
     }
