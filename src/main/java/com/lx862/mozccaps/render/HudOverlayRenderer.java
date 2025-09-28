@@ -1,6 +1,7 @@
 package com.lx862.mozccaps.render;
 
 import com.lx862.mozccaps.MainClient;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -12,17 +13,18 @@ import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
 import org.joml.Matrix3x2fStack;
 
-public class HudOverlayRenderer {
+public class HudOverlayRenderer implements HudElement {
     private static final int PADDING = 4;
     private static final int TEXT_FIELD_HEIGHT = 12;
 
-    public static void draw(DrawContext drawContext, RenderTickCounter delta) {
+    @Override
+    public void render(DrawContext drawContext, RenderTickCounter renderTickCounter) {
         MinecraftClient minecraft = MinecraftClient.getInstance();
-        CapArmorRenderer.updateCapPressedAnimation(delta.getDynamicDeltaTicks() / 4);
+        CapArmorRenderer.updateCapPressedAnimation(renderTickCounter.getDynamicDeltaTicks() / 4);
 
         if(!minecraft.options.hudHidden && (!(minecraft.currentScreen instanceof ChatScreen)) && MainClient.capEquipped() && MainClient.getAtamaInput().inputEnabled() && minecraft.player != null) {
             String selectedChar = MainClient.getAtamaInput().getSelection(minecraft.player.getHeadYaw());
-            float typeAnimation = (float) CapArmorRenderer.getTypeAnimationProgress(minecraft.player.getGameProfile().getName(), 1.0);
+            float typeAnimation = (float) CapArmorRenderer.getTypeAnimationProgress(minecraft.player.getGameProfile().name(), 1.0);
 
             drawSelectedChar(drawContext, minecraft.textRenderer, selectedChar, typeAnimation);
             drawTextField(drawContext, minecraft.textRenderer, minecraft.options, selectedChar);

@@ -12,8 +12,9 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 public class Main implements ModInitializer {
-	public static final RegistryKey<Item> CAPS_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of("mozc_caps", "caps"));
-	public static final RegistryKey<Item> CAPS_STRAPPED_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of("mozc_caps", "caps_strapped"));
+	public static final String MOD_ID = "mozc_caps";
+	public static final RegistryKey<Item> CAPS_KEY = RegistryKey.of(RegistryKeys.ITEM, id("caps"));
+	public static final RegistryKey<Item> CAPS_STRAPPED_KEY = RegistryKey.of(RegistryKeys.ITEM, id("caps_strapped"));
 	public static final Item CAPS = Registry.register(Registries.ITEM, CAPS_KEY, new Item(new Item.Settings().armor(ArmorMaterials.LEATHER, EquipmentType.HELMET).registryKey(CAPS_KEY).useItemPrefixedTranslationKey()));
 	public static final Item CAPS_STRAPPED = Registry.register(Registries.ITEM, CAPS_STRAPPED_KEY, new Item(new Item.Settings().armor(ArmorMaterials.LEATHER, EquipmentType.HELMET).registryKey(CAPS_STRAPPED_KEY).useItemPrefixedTranslationKey()));
 
@@ -23,6 +24,6 @@ public class Main implements ModInitializer {
 	}
 
 	public static Identifier id(String path) {
-		return Identifier.of("mozc_caps", path);
+		return Identifier.of(MOD_ID, path);
 	}
 }

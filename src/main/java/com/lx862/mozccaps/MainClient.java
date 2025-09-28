@@ -7,7 +7,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -18,14 +18,15 @@ import org.lwjgl.glfw.GLFW;
 
 public class MainClient implements ClientModInitializer {
 	private static final AtamaInput atamaInput = new AtamaInput();
-	public static final KeyBinding toggleInputKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.mozc_caps.toggle_input", GLFW.GLFW_KEY_Y, "category.mozc_caps.title"));
+	private static final KeyBinding.Category keybindCategory = KeyBinding.Category.create(Main.id("default"));
+	public static final KeyBinding toggleInputKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.mozc_caps.toggle_input", GLFW.GLFW_KEY_Y, keybindCategory));
 
 	@Override
 	public void onInitializeClient() {
 		ArmorRenderer.register(new CapArmorRenderer(false), Main.CAPS);
 		ArmorRenderer.register(new CapArmorRenderer(true), Main.CAPS_STRAPPED);
 
-		HudRenderCallback.EVENT.register(HudOverlayRenderer::draw);
+		HudElementRegistry.addLast(Main.id("typing_hud"), new HudOverlayRenderer());
 		ClientTickEvents.START_CLIENT_TICK.register(this::handleInput);
 		Networking.registerClient();
 
