@@ -6,7 +6,7 @@ import com.lx862.mozccaps.armor.ChinModel;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.state.BipedEntityRenderState;
@@ -44,7 +44,7 @@ public class CapArmorRenderer implements ArmorRenderer {
         matrices.multiply(rotation);
         matrices.scale(0.6F, 0.6F, 0.6F);
         matrices.translate(0, 0.1F * pressedAmount, 0);
-        orderedRenderCommandQueue.submitModelPart(capModel, matrices, RenderLayer.getEntityCutout(TEXTURE_ID), light, OverlayTexture.DEFAULT_UV, null);
+        orderedRenderCommandQueue.submitModelPart(capModel, matrices, RenderLayers.entityCutout(TEXTURE_ID), light, OverlayTexture.DEFAULT_UV, null);
         matrices.pop();
     }
 
@@ -52,7 +52,7 @@ public class CapArmorRenderer implements ArmorRenderer {
         matrices.push();
         matrices.scale(0.6F, 0.6F, 0.6F);
         chinModel.setTransform(contextModel.getHead().getTransform());
-        orderedRenderCommandQueue.submitModelPart(chinModel, matrices, RenderLayer.getEntityCutout(TEXTURE_ID), light, OverlayTexture.DEFAULT_UV, null);
+        orderedRenderCommandQueue.submitModelPart(chinModel, matrices, RenderLayers.entityCutout(TEXTURE_ID), light, OverlayTexture.DEFAULT_UV, null);
         matrices.pop();
     }
 

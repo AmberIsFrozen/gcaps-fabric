@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import org.lwjgl.glfw.GLFW;
@@ -37,7 +38,7 @@ public class MainClient implements ClientModInitializer {
 	}
 
 	private void handleInput(MinecraftClient minecraft) {
-		if(minecraft.player == null || !capEquipped()) return;
+		if(minecraft.player == null || !capEquipped(minecraft.player)) return;
 
 		while(toggleInputKey.wasPressed()) {
 			atamaInput.toggleInput();
@@ -63,14 +64,12 @@ public class MainClient implements ClientModInitializer {
 		}
 	}
 
-	public static boolean capEquipped() {
-		return capEquipped(false) || capEquipped(true);
+	public static boolean capEquipped(PlayerEntity playerEntity) {
+		return capEquipped(playerEntity,false) || capEquipped(playerEntity, true);
 	}
 
-	public static boolean capEquipped(boolean chinStrapped) {
-		MinecraftClient minecraft = MinecraftClient.getInstance();
-		if(minecraft.player == null) return false;
-		Item helmetItem = minecraft.player.getEquippedStack(EquipmentSlot.HEAD).getItem();
+	public static boolean capEquipped(PlayerEntity playerEntity, boolean chinStrapped) {
+		Item helmetItem = playerEntity.getEquippedStack(EquipmentSlot.HEAD).getItem();
 		return chinStrapped ? helmetItem == Main.CAPS_STRAPPED : helmetItem == Main.CAPS;
 	}
 

@@ -22,7 +22,7 @@ public class AtamaInput {
     public String getSelection(float headYawAngle) {
         String[] chars = layouts[currentLayout].characters();
         int selectIndex = Math.round((wrapAngle(headYawAngle) / 360) * (chars.length - 1));
-        boolean capsLock = MainClient.capEquipped(true);
+        boolean capsLock = MainClient.capEquipped(MinecraftClient.getInstance().player, true);
 
         if(capsLock) {
             return chars[selectIndex].toUpperCase();
