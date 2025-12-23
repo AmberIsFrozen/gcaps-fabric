@@ -1,11 +1,11 @@
 package com.lx862.mozccaps.mixin;
 
 import com.lx862.mozccaps.render.PlayerNameStorage;
-import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(PlayerEntityRenderState.class)
+@Mixin(AvatarRenderState.class)
 public class PlayerEntityRenderStateMixin implements PlayerNameStorage {
     @Unique
     public String gcaps$playerName;

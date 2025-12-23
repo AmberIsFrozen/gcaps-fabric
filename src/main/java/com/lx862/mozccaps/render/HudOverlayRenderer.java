@@ -2,15 +2,15 @@ package com.lx862.mozccaps.render;
 
 import com.lx862.mozccaps.MainClient;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.math.ColorHelper;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.CommonColors;
 import org.joml.Matrix3x2fStack;
 
 public class HudOverlayRenderer implements HudElement {
@@ -18,26 +18,26 @@ public class HudOverlayRenderer implements HudElement {
     private static final int TEXT_FIELD_HEIGHT = 12;
 
     @Override
-    public void render(DrawContext drawContext, RenderTickCounter renderTickCounter) {
-        MinecraftClient minecraft = MinecraftClient.getInstance();
-        CapArmorRenderer.updateCapPressedAnimation(renderTickCounter.getDynamicDeltaTicks() / 4);
+    public void render(GuiGraphics drawContext, DeltaTracker renderTickCounter) {
+        Minecraft minecraft = Minecraft.getInstance();
+        CapArmorRenderer.updateCapPressedAnimation(renderTickCounter.getGameTimeDeltaTicks() / 4);
 
-        if(!minecraft.options.hudHidden && (!(minecraft.currentScreen instanceof ChatScreen)) && MainClient.capEquipped(minecraft.player) && MainClient.getAtamaInput().inputEnabled() && minecraft.player != null) {
-            String selectedChar = MainClient.getAtamaInput().getSelection(minecraft.player.getHeadYaw());
+        if(!minecraft.options.hideGui && (!(minecraft.screen instanceof ChatScreen)) && MainClient.capEquipped(minecraft.player) && MainClient.getAtamaInput().inputEnabled() && minecraft.player != null) {
+            String selectedChar = MainClient.getAtamaInput().getSelection(minecraft.player.getYHeadRot());
             float typeAnimation = (float) CapArmorRenderer.getTypeAnimationProgress(minecraft.player.getGameProfile().name(), 1.0);
 
-            drawSelectedChar(drawContext, minecraft.textRenderer, selectedChar, typeAnimation);
-            drawTextField(drawContext, minecraft.textRenderer, minecraft.options, selectedChar);
+            drawSelectedChar(drawContext, minecraft.font, selectedChar, typeAnimation);
+            drawTextField(drawContext, minecraft.font, minecraft.options, selectedChar);
         }
     }
 
-    private static void drawSelectedChar(DrawContext drawContext, TextRenderer textRenderer, String selectedChar, float typeAnimationProgress) {
-        Matrix3x2fStack matrices = drawContext.getMatrices();
-        float halfTextWidth = textRenderer.getWidth(selectedChar) / 2f;
-        float halfFontHeight = textRenderer.fontHeight / 2f;
+    private static void drawSelectedChar(GuiGraphics drawContext, Font textRenderer, String selectedChar, float typeAnimationProgress) {
+        Matrix3x2fStack matrices = drawContext.pose();
+        float halfTextWidth = textRenderer.width(selectedChar) / 2f;
+        float halfFontHeight = textRenderer.lineHeight / 2f;
 
-        float halfScreenWidth = drawContext.getScaledWindowWidth() / 2f;
-        float halfScreenHeight = drawContext.getScaledWindowHeight() / 2f;
+        float halfScreenWidth = drawContext.guiWidth() / 2f;
+        float halfScreenHeight = drawContext.guiHeight() / 2f;
 
         float textScale = 1.5f + (typeAnimationProgress * 0.5f);
         matrices.pushMatrix();
@@ -45,37 +45,37 @@ public class HudOverlayRenderer implements HudElement {
         matrices.translate(halfTextWidth, halfFontHeight);
         matrices.scale(textScale, textScale);
         matrices.translate(-halfTextWidth, -halfFontHeight);
-        drawContext.drawTextWithShadow(textRenderer, Text.literal(selectedChar), 0, 0, Colors.WHITE);
+        drawContext.drawString(textRenderer, Component.literal(selectedChar), 0, 0, CommonColors.WHITE);
         matrices.popMatrix();
     }
 
-    private static void drawTextField(DrawContext drawContext, TextRenderer textRenderer, GameOptions gameOptions, String selectedChar) {
-        int width = drawContext.getScaledWindowWidth();
-        int height = drawContext.getScaledWindowHeight();
+    private static void drawTextField(GuiGraphics drawContext, Font textRenderer, Options gameOptions, String selectedChar) {
+        int width = drawContext.guiWidth();
+        int height = drawContext.guiHeight();
         int textFieldY = height - 34;
 
         // Background
-        drawContext.fill(0, textFieldY, width, textFieldY + TEXT_FIELD_HEIGHT, ColorHelper.withAlpha(128, Colors.BLACK));
+        drawContext.fill(0, textFieldY, width, textFieldY + TEXT_FIELD_HEIGHT, ARGB.color(128, CommonColors.BLACK));
 
-        int sentenceWidth = textRenderer.getWidth(MainClient.getAtamaInput().getInputted());
-        int textY = textFieldY + (TEXT_FIELD_HEIGHT / 2) - (textRenderer.fontHeight / 2);
+        int sentenceWidth = textRenderer.width(MainClient.getAtamaInput().getInputted());
+        int textY = textFieldY + (TEXT_FIELD_HEIGHT / 2) - (textRenderer.lineHeight / 2);
 
         // Detail
-        drawText(drawContext, textRenderer, Text.translatable("hud.mozc_caps.left_click", Text.translatable(gameOptions.attackKey.getBoundKeyTranslationKey()).getString()), 0, textY - PADDING - textRenderer.fontHeight * 3, Colors.WHITE);
-        drawText(drawContext, textRenderer, Text.translatable("hud.mozc_caps.middle_click", Text.translatable(gameOptions.pickItemKey.getBoundKeyTranslationKey()).getString()), 0, textY - PADDING - textRenderer.fontHeight * 2, Colors.WHITE);
-        drawText(drawContext, textRenderer, Text.translatable("hud.mozc_caps.right_click", Text.translatable(gameOptions.useKey.getBoundKeyTranslationKey()).getString()), 0, textY - PADDING - textRenderer.fontHeight, Colors.WHITE);
-        drawTextRightAligned(drawContext, textRenderer, Text.translatable("hud.mozc_caps.layout", MainClient.getAtamaInput().getLayoutName()), 0, textY - PADDING - textRenderer.fontHeight, Colors.WHITE);
+        drawText(drawContext, textRenderer, Component.translatable("hud.mozc_caps.left_click", Component.translatable(gameOptions.keyAttack.saveString()).getString()), 0, textY - PADDING - textRenderer.lineHeight * 3, CommonColors.WHITE);
+        drawText(drawContext, textRenderer, Component.translatable("hud.mozc_caps.middle_click", Component.translatable(gameOptions.keyPickItem.saveString()).getString()), 0, textY - PADDING - textRenderer.lineHeight * 2, CommonColors.WHITE);
+        drawText(drawContext, textRenderer, Component.translatable("hud.mozc_caps.right_click", Component.translatable(gameOptions.keyUse.saveString()).getString()), 0, textY - PADDING - textRenderer.lineHeight, CommonColors.WHITE);
+        drawTextRightAligned(drawContext, textRenderer, Component.translatable("hud.mozc_caps.layout", MainClient.getAtamaInput().getLayoutName()), 0, textY - PADDING - textRenderer.lineHeight, CommonColors.WHITE);
 
         // Text
-        drawText(drawContext, textRenderer, Text.literal(MainClient.getAtamaInput().getInputted()), 0, textY, 0xFFFFFFFF);
-        drawText(drawContext, textRenderer, Text.literal(selectedChar), sentenceWidth, textY, 0xFFAAAAAA);
+        drawText(drawContext, textRenderer, Component.literal(MainClient.getAtamaInput().getInputted()), 0, textY, 0xFFFFFFFF);
+        drawText(drawContext, textRenderer, Component.literal(selectedChar), sentenceWidth, textY, 0xFFAAAAAA);
     }
 
-    private static void drawText(DrawContext drawContext, TextRenderer textRenderer, Text text, int x, int y, int color) {
-        drawContext.drawTextWithShadow(textRenderer, text, PADDING + x, y, color);
+    private static void drawText(GuiGraphics drawContext, Font textRenderer, Component text, int x, int y, int color) {
+        drawContext.drawString(textRenderer, text, PADDING + x, y, color);
     }
 
-    private static void drawTextRightAligned(DrawContext drawContext, TextRenderer textRenderer, Text text, int x, int y, int color) {
-        drawContext.drawTextWithShadow(textRenderer, text, drawContext.getScaledWindowWidth() - PADDING - PADDING - x - textRenderer.getWidth(text), y, color);
+    private static void drawTextRightAligned(GuiGraphics drawContext, Font textRenderer, Component text, int x, int y, int color) {
+        drawContext.drawString(textRenderer, text, drawContext.guiWidth() - PADDING - PADDING - x - textRenderer.width(text), y, color);
     }
 }

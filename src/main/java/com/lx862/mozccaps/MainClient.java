@@ -9,18 +9,18 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import org.lwjgl.glfw.GLFW;
 
 public class MainClient implements ClientModInitializer {
 	private static final AtamaInput atamaInput = new AtamaInput();
-	private static final KeyBinding.Category keybindCategory = KeyBinding.Category.create(Main.id("default"));
-	public static final KeyBinding toggleInputKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.mozc_caps.toggle_input", GLFW.GLFW_KEY_Y, keybindCategory));
+	private static final KeyMapping.Category keybindCategory = KeyMapping.Category.register(Main.id("default"));
+	public static final KeyMapping toggleInputKey = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.mozc_caps.toggle_input", GLFW.GLFW_KEY_Y, keybindCategory));
 
 	@Override
 	public void onInitializeClient() {
@@ -31,45 +31,45 @@ public class MainClient implements ClientModInitializer {
 		ClientTickEvents.START_CLIENT_TICK.register(this::handleInput);
 		Networking.registerClient();
 
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> {
-			content.add(Main.CAPS);
-			content.add(Main.CAPS_STRAPPED);
+		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(content -> {
+			content.accept(Main.CAPS);
+			content.accept(Main.CAPS_STRAPPED);
 		});
 	}
 
-	private void handleInput(MinecraftClient minecraft) {
+	private void handleInput(Minecraft minecraft) {
 		if(minecraft.player == null || !capEquipped(minecraft.player)) return;
 
-		while(toggleInputKey.wasPressed()) {
+		while(toggleInputKey.consumeClick()) {
 			atamaInput.toggleInput();
 		}
 
 		if(atamaInput.inputEnabled()) {
 			// LMB
-			while(minecraft.options.attackKey.wasPressed()) {
-				atamaInput.input(minecraft.player.getHeadYaw());
-				minecraft.player.swingHand(minecraft.player.getActiveHand());
+			while(minecraft.options.keyAttack.consumeClick()) {
+				atamaInput.input(minecraft.player.getYHeadRot());
+				minecraft.player.swing(minecraft.player.getUsedItemHand());
 				Networking.sendKeyPressedClient(minecraft.player);
 			}
 
 			// MMB
-			while(minecraft.options.pickItemKey.wasPressed()) {
+			while(minecraft.options.keyPickItem.consumeClick()) {
 				atamaInput.cycleLayout();
 			}
 
 			// RMB
-			while(minecraft.options.useKey.wasPressed()) {
+			while(minecraft.options.keyUse.consumeClick()) {
 				atamaInput.sendMessage(minecraft);
 			}
 		}
 	}
 
-	public static boolean capEquipped(PlayerEntity playerEntity) {
+	public static boolean capEquipped(Player playerEntity) {
 		return capEquipped(playerEntity,false) || capEquipped(playerEntity, true);
 	}
 
-	public static boolean capEquipped(PlayerEntity playerEntity, boolean chinStrapped) {
-		Item helmetItem = playerEntity.getEquippedStack(EquipmentSlot.HEAD).getItem();
+	public static boolean capEquipped(Player playerEntity, boolean chinStrapped) {
+		Item helmetItem = playerEntity.getItemBySlot(EquipmentSlot.HEAD).getItem();
 		return chinStrapped ? helmetItem == Main.CAPS_STRAPPED : helmetItem == Main.CAPS;
 	}
 

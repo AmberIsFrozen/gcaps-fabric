@@ -1,6 +1,6 @@
 package com.lx862.mozccaps;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 public class AtamaInput {
     private final Language[] layouts;
@@ -22,7 +22,7 @@ public class AtamaInput {
     public String getSelection(float headYawAngle) {
         String[] chars = layouts[currentLayout].characters();
         int selectIndex = Math.round((wrapAngle(headYawAngle) / 360) * (chars.length - 1));
-        boolean capsLock = MainClient.capEquipped(MinecraftClient.getInstance().player, true);
+        boolean capsLock = MainClient.capEquipped(Minecraft.getInstance().player, true);
 
         if(capsLock) {
             return chars[selectIndex].toUpperCase();
@@ -62,10 +62,10 @@ public class AtamaInput {
         inputted += getSelection(headYawAngle);
     }
 
-    public void sendMessage(MinecraftClient minecraft) {
+    public void sendMessage(Minecraft minecraft) {
         if(minecraft.player == null || inputted.startsWith("/") || inputted.trim().isEmpty()) return;
 
-        minecraft.player.networkHandler.sendChatMessage(inputted);
+        minecraft.player.connection.sendChat(inputted);
         inputted = "";
         inputEnabled = false;
     }

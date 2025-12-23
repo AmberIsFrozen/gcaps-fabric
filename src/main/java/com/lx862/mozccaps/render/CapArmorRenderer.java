@@ -3,18 +3,18 @@ package com.lx862.mozccaps.render;
 import com.lx862.mozccaps.Main;
 import com.lx862.mozccaps.armor.CapModel;
 import com.lx862.mozccaps.armor.ChinModel;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
-import net.minecraft.client.model.*;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.state.BipedEntityRenderState;
-import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
 
 import java.util.HashMap;
@@ -33,27 +33,27 @@ public class CapArmorRenderer implements ArmorRenderer {
         this.hasStrap = hasStrap;
     }
 
-    private void renderCap(MatrixStack matrices, OrderedRenderCommandQueue orderedRenderCommandQueue, BipedEntityModel<BipedEntityRenderState> contextModel, double pressedAmount, int light) {
+    private void renderCap(PoseStack matrices, SubmitNodeCollector orderedRenderCommandQueue, HumanoidModel<HumanoidRenderState> contextModel, double pressedAmount, int light) {
         Quaternionf rotation = new Quaternionf();
         rotation.rotateX(CAP_TILT);
-        rotation.rotateX(contextModel.getHead().pitch);
+        rotation.rotateX(contextModel.getHead().xRot);
 
-        matrices.push();
-        capModel.setTransform(contextModel.hat.getTransform());
+        matrices.pushPose();
+        capModel.loadPose(contextModel.hat.storePose());
         matrices.translate(0, -0.1F, -0.07F); //Small offset to make things look right
-        matrices.multiply(rotation);
+        matrices.mulPose(rotation);
         matrices.scale(0.6F, 0.6F, 0.6F);
         matrices.translate(0, 0.1F * pressedAmount, 0);
-        orderedRenderCommandQueue.submitModelPart(capModel, matrices, RenderLayers.entityCutout(TEXTURE_ID), light, OverlayTexture.DEFAULT_UV, null);
-        matrices.pop();
+        orderedRenderCommandQueue.submitModelPart(capModel, matrices, RenderTypes.entityCutout(TEXTURE_ID), light, OverlayTexture.NO_OVERLAY, null);
+        matrices.popPose();
     }
 
-    private void renderStrap(MatrixStack matrices, OrderedRenderCommandQueue orderedRenderCommandQueue, BipedEntityModel<BipedEntityRenderState> contextModel, int light) {
-        matrices.push();
+    private void renderStrap(PoseStack matrices, SubmitNodeCollector orderedRenderCommandQueue, HumanoidModel<HumanoidRenderState> contextModel, int light) {
+        matrices.pushPose();
         matrices.scale(0.6F, 0.6F, 0.6F);
-        chinModel.setTransform(contextModel.getHead().getTransform());
-        orderedRenderCommandQueue.submitModelPart(chinModel, matrices, RenderLayers.entityCutout(TEXTURE_ID), light, OverlayTexture.DEFAULT_UV, null);
-        matrices.pop();
+        chinModel.loadPose(contextModel.getHead().storePose());
+        orderedRenderCommandQueue.submitModelPart(chinModel, matrices, RenderTypes.entityCutout(TEXTURE_ID), light, OverlayTexture.NO_OVERLAY, null);
+        matrices.popPose();
     }
 
     public static void updateCapPressedAnimation(float delta) {
@@ -76,9 +76,9 @@ public class CapArmorRenderer implements ArmorRenderer {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, ItemStack itemStack, BipedEntityRenderState bipedEntityRenderState, EquipmentSlot equipmentSlot, int light, BipedEntityModel<BipedEntityRenderState> bipedEntityModel) {
+    public void render(PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, ItemStack itemStack, HumanoidRenderState bipedEntityRenderState, EquipmentSlot equipmentSlot, int light, HumanoidModel<HumanoidRenderState> bipedEntityModel) {
         final double pressedAmount;
-        if(bipedEntityRenderState instanceof PlayerEntityRenderState playerEntityRenderState) {
+        if(bipedEntityRenderState instanceof AvatarRenderState playerEntityRenderState) {
             double animationProgress = getTypeAnimationProgress(((PlayerNameStorage)playerEntityRenderState).gcaps$getPlayerName(), 0.0);
             pressedAmount = animationProgress > 0.5 ? (1 - animationProgress) : (animationProgress);
         } else {

@@ -4,7 +4,7 @@ import com.lx862.mozccaps.render.CapArmorRenderer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class Networking {
     public static void registerClient() {
@@ -20,13 +20,13 @@ public class Networking {
 
         ServerPlayNetworking.registerGlobalReceiver(PlayerTypePayload.PACKET_ID, (payload, context) -> {
             String playerId = payload.getPlayerName();
-            context.server().getPlayerManager().getPlayerList().forEach(player -> {
+            context.server().getPlayerList().getPlayers().forEach(player -> {
                 ServerPlayNetworking.send(player, new UpdatePlayerTypePayload(playerId));
             });
         });
     }
 
-    public static void sendKeyPressedClient(PlayerEntity player) {
+    public static void sendKeyPressedClient(Player player) {
         ClientPlayNetworking.send(new PlayerTypePayload(player.getName().getString()));
     }
 }

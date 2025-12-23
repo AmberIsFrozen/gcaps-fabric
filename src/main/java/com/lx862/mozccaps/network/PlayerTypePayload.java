@@ -1,17 +1,17 @@
 package com.lx862.mozccaps.network;
 
 import com.lx862.mozccaps.Main;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record PlayerTypePayload(String playerName) implements CustomPayload {
-    public static final CustomPayload.Id<PlayerTypePayload> PACKET_ID = new CustomPayload.Id<>(Main.id("player_typed"));
-    public static final PacketCodec<RegistryByteBuf, PlayerTypePayload> PACKET_CODEC = PacketCodec.tuple(PacketCodecs.STRING, PlayerTypePayload::playerName, PlayerTypePayload::new);
+public record PlayerTypePayload(String playerName) implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<PlayerTypePayload> PACKET_ID = new CustomPacketPayload.Type<>(Main.id("player_typed"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, PlayerTypePayload> PACKET_CODEC = StreamCodec.composite(ByteBufCodecs.STRING_UTF8, PlayerTypePayload::playerName, PlayerTypePayload::new);
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return PACKET_ID;
     }
 

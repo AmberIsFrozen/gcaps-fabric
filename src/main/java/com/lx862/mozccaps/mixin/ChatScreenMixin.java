@@ -1,27 +1,27 @@
 package com.lx862.mozccaps.mixin;
 
 import com.lx862.mozccaps.MainClient;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ChatScreen.class)
 public class ChatScreenMixin extends Screen {
 
-    @Shadow protected TextFieldWidget chatField;
+    @Shadow protected EditBox input;
 
-    protected ChatScreenMixin(Text title) {
+    protected ChatScreenMixin(Component title) {
         super(title);
     }
 
     @Override
-    public void close() {
-        super.close();
-        if(!chatField.getText().startsWith("/")) { // We probably don't want to record command
-            MainClient.getAtamaInput().setInputted(chatField.getText());
+    public void onClose() {
+        super.onClose();
+        if(!input.getValue().startsWith("/")) { // We probably don't want to record command
+            MainClient.getAtamaInput().setInputted(input.getValue());
         }
     }
 }
