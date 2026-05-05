@@ -5,10 +5,10 @@ import com.lx862.mozccaps.network.Networking;
 import com.lx862.mozccaps.render.HudOverlayRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -20,7 +20,7 @@ import org.lwjgl.glfw.GLFW;
 public class MainClient implements ClientModInitializer {
 	private static final AtamaInput atamaInput = new AtamaInput();
 	private static final KeyMapping.Category keybindCategory = KeyMapping.Category.register(Main.id("default"));
-	public static final KeyMapping toggleInputKey = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.mozc_caps.toggle_input", GLFW.GLFW_KEY_Y, keybindCategory));
+	public static final KeyMapping toggleInputKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.mozc_caps.toggle_input", GLFW.GLFW_KEY_Y, keybindCategory));
 
 	@Override
 	public void onInitializeClient() {
@@ -31,7 +31,7 @@ public class MainClient implements ClientModInitializer {
 		ClientTickEvents.START_CLIENT_TICK.register(this::handleInput);
 		Networking.registerClient();
 
-		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(content -> {
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT).register(content -> {
 			content.accept(Main.CAPS);
 			content.accept(Main.CAPS_STRAPPED);
 		});
@@ -64,16 +64,16 @@ public class MainClient implements ClientModInitializer {
 		}
 	}
 
-	public static boolean capEquipped(Player playerEntity) {
-		return capEquipped(playerEntity,false) || capEquipped(playerEntity, true);
+	public static boolean capEquipped(Player player) {
+		return capEquipped(player,false) || capEquipped(player, true);
 	}
 
-	public static boolean capEquipped(Player playerEntity, boolean chinStrapped) {
-		Item helmetItem = playerEntity.getItemBySlot(EquipmentSlot.HEAD).getItem();
+	public static boolean capEquipped(Player player, boolean chinStrapped) {
+		Item helmetItem = player.getItemBySlot(EquipmentSlot.HEAD).getItem();
 		return chinStrapped ? helmetItem == Main.CAPS_STRAPPED : helmetItem == Main.CAPS;
 	}
 
-	public static AtamaInput getAtamaInput() {
+	public static AtamaInput getInput() {
 		return atamaInput;
 	}
 }

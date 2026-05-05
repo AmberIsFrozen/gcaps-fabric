@@ -15,8 +15,8 @@ public class Networking {
     }
 
     public static void registerServer() {
-        PayloadTypeRegistry.playC2S().register(PlayerTypePayload.PACKET_ID, PlayerTypePayload.PACKET_CODEC);
-        PayloadTypeRegistry.playS2C().register(UpdatePlayerTypePayload.PACKET_ID, UpdatePlayerTypePayload.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(PlayerTypePayload.PACKET_ID, PlayerTypePayload.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(UpdatePlayerTypePayload.PACKET_ID, UpdatePlayerTypePayload.PACKET_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(PlayerTypePayload.PACKET_ID, (payload, context) -> {
             String playerId = payload.getPlayerName();

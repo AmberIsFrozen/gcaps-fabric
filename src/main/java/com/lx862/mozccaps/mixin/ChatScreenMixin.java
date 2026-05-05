@@ -21,7 +21,7 @@ public class ChatScreenMixin extends Screen {
     public void onClose() {
         super.onClose();
         if(!input.getValue().startsWith("/")) { // We probably don't want to record command
-            MainClient.getAtamaInput().setInputted(input.getValue());
+            MainClient.getInput().setInputted(input.getValue());
         }
     }
 }
