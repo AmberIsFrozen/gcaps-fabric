@@ -39,7 +39,7 @@ public abstract class MinecraftClientMixin {
     @Inject(method = "handleKeybinds", at = @At(value = "HEAD"))
     public void moveCapsContentToChat(CallbackInfo ci) {
         if(MainClient.capEquipped(player) && MainClient.getInput().inputEnabled()) {
-            gui.getChat().saveAsDraft(MainClient.getInput().getInputted());
+            gui.hud.getChat().saveAsDraft(MainClient.getInput().getInputted());
         }
     }
 }

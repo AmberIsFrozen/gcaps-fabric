@@ -22,7 +22,7 @@ public class HudOverlayRenderer implements HudElement {
         Minecraft minecraft = Minecraft.getInstance();
         CapArmorRenderer.updateCapPressedAnimation(deltaTracker.getGameTimeDeltaTicks() / 4);
 
-        if(!minecraft.options.hideGui && (!(minecraft.screen instanceof ChatScreen)) && MainClient.capEquipped(minecraft.player) && MainClient.getInput().inputEnabled() && minecraft.player != null) {
+        if(!minecraft.gui.hud.isHidden() && (!(minecraft.gui.screen() instanceof ChatScreen)) && MainClient.capEquipped(minecraft.player) && MainClient.getInput().inputEnabled() && minecraft.player != null) {
             String selectedChar = MainClient.getInput().getSelection(minecraft.player.getYHeadRot());
             float typeAnimation = (float) CapArmorRenderer.getTypeAnimationProgress(minecraft.player.getGameProfile().name(), 1.0);
 
